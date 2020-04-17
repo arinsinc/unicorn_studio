@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
@@ -33,6 +34,7 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 @EnableTransactionManagement
 @ComponentScan("com.unicorn.studio")
 @EnableJpaRepositories("com.unicorn.studio.dao")
+@EnableAspectJAutoProxy
 @PropertySource({"classpath:postgresql.properties"})
 public class UnicornStudioConfig implements WebMvcConfigurer {
 	@Autowired
@@ -109,7 +111,7 @@ public class UnicornStudioConfig implements WebMvcConfigurer {
 		return txManager;
 	}
 	
-	@Bean
+	@Bean(name="entityManagerFactory")
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 		LocalContainerEntityManagerFactoryBean entityManager = new LocalContainerEntityManagerFactoryBean();
 		entityManager.setDataSource(myDataSource());
@@ -122,7 +124,7 @@ public class UnicornStudioConfig implements WebMvcConfigurer {
 	}
 	
 	// JPA Transaction Manager
-	@Bean
+	@Bean(name="jpaTransactionManager")
 	@Autowired
 	public JpaTransactionManager transactionManager() {
 		JpaTransactionManager txManager = new JpaTransactionManager();

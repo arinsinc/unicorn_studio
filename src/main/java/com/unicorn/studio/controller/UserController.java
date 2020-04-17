@@ -14,14 +14,14 @@ import com.unicorn.studio.entity.User;
 import com.unicorn.studio.service.UnicornService;
 
 @Controller
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
 	// Inject Unicorn Service
 	@Autowired
 	private UnicornService unicornService;
 	
-	@RequestMapping("/list")
-	public String listUser(Model model) {
+	@GetMapping("/list")
+	public String getUsers(Model model) {
 		List<User> users = unicornService.getUsers();
 		model.addAttribute("theUsers", users);
 		return "list-users";
@@ -37,7 +37,7 @@ public class UserController {
 	@PostMapping("/add-user")
 	public String addUser(@ModelAttribute("theUser") User user) {
 		unicornService.saveUser(user);
-		return "redirect:/user/list";
+		return "redirect:/users/list";
 	}
 	
 	@GetMapping("/edit-user")
@@ -50,6 +50,6 @@ public class UserController {
 	@PostMapping("/delete")
 	public String deleteUser(@RequestParam("userID") int id, Model model) {
 		unicornService.deleteUser(id);
-		return "redirect:/user/list";
+		return "redirect:/users/list";
 	}
 }

@@ -12,7 +12,6 @@ import com.unicorn.studio.dao.ClubRepository;
 import com.unicorn.studio.dao.CompanyRepository;
 import com.unicorn.studio.dao.FundingRepository;
 import com.unicorn.studio.dao.InvestorRepository;
-import com.unicorn.studio.dao.UserDAO;
 import com.unicorn.studio.dao.UserRepository;
 import com.unicorn.studio.entity.Club;
 import com.unicorn.studio.entity.Company;
@@ -38,9 +37,6 @@ public class UnicornServiceImp implements UnicornService {
 	@Autowired
 	private UserRepository userRepository;
 	
-	@Autowired
-	private UserDAO userDAO;
-
 	
 	
 	@Autowired
