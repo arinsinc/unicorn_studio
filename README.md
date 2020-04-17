@@ -11,7 +11,7 @@ Here we are using Postgresql as our DB provider and various tools of Spring Fram
 2. REST API (Using Spring REST and Hibernate)
 3. Audit Logging (Using Spring AOP)
 
-## Development Appraoch
+## Development Approach
 
 1. Entity Class
 2. Controller Class
