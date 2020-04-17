@@ -28,10 +28,10 @@ public class Company {
 	@Column(name="id")
 	private int id;
 	
-	@Column(name="name")
+	@Column(name="company_name")
 	@NotNull
 	@Size(min=3, max=32)
-	private String name;
+	private String companyName;
 	
 	@Column(name="headquarter")
 	@NotNull
@@ -47,16 +47,16 @@ public class Company {
 	@Size(min=3, max=32)
 	private String industry;
 	
-	@Column(name="type")
+	@Column(name="company_type")
 	@NotNull
 	@Size(min=3, max=32)
-	private String type;
+	private String companyType;
 	
-	@OneToOne(cascade=CascadeType.ALL)
+	@OneToOne(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name="user_id")
 	private User user;
 	
-	@OneToMany(mappedBy="company", cascade={CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	@OneToMany(fetch = FetchType.LAZY, mappedBy="company", cascade={CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
 	private List<Funding> fundings;
 	
 	@ManyToMany(fetch=FetchType.LAZY, cascade= {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
@@ -68,12 +68,12 @@ public class Company {
 	
 	public Company() {}
 
-	public Company(String name, String headQuarter, Date foundedYear, String industry, String type) {
-		this.name = name;
+	public Company(String companyName, String headQuarter, Date foundedYear, String industry, String companyType) {
+		this.companyName = companyName;
 		this.headQuarter = headQuarter;
 		this.foundedYear = foundedYear;
 		this.industry = industry;
-		this.type = type;
+		this.companyType = companyType;
 	}
 
 	public int getId() {
@@ -84,12 +84,12 @@ public class Company {
 		this.id = id;
 	}
 
-	public String getName() {
-		return name;
+	public String getCompanyName() {
+		return companyName;
 	}
 
-	public void setName(String name) {
-		this.name = name;
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
 	}
 
 	public String getHeadQuarter() {
@@ -116,42 +116,18 @@ public class Company {
 		this.industry = industry;
 	}
 
-	public String getType() {
-		return type;
+	public String getCompanyType() {
+		return companyType;
 	}
 
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public List<Funding> getFundings() {
-		return fundings;
-	}
-
-	public void setFundings(List<Funding> fundings) {
-		this.fundings = fundings;
-	}
-
-	public List<Club> getClubs() {
-		return clubs;
-	}
-
-	public void setClubs(List<Club> clubs) {
-		this.clubs = clubs;
+	public void setCompanyType(String companyType) {
+		this.companyType = companyType;
 	}
 
 	@Override
 	public String toString() {
-		return "Company [id=" + id + ", name=" + name + ", headQuarter=" + headQuarter + ", foundedYear=" + foundedYear
-				+ ", industry=" + industry + ", type=" + type + "]";
+		return "Company [id=" + id + ", companyName=" + companyName + ", headQuarter=" + headQuarter + ", foundedYear=" + foundedYear
+				+ ", industry=" + industry + ", companyType=" + companyType + "]";
 	}
 	
 	

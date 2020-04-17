@@ -59,14 +59,6 @@ public class Club {
 		this.title = title;
 	}
 
-	public List<Company> getCompany() {
-		return companies;
-	}
-
-	public void setCompany(List<Company> companies) {
-		this.companies = companies;
-	}
-
 	@Override
 	public String toString() {
 		return "Club [id=" + id + ", title=" + title + ", companies=" + companies + "]";

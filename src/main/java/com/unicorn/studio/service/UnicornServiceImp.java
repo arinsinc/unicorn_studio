@@ -12,6 +12,7 @@ import com.unicorn.studio.dao.ClubRepository;
 import com.unicorn.studio.dao.CompanyRepository;
 import com.unicorn.studio.dao.FundingRepository;
 import com.unicorn.studio.dao.InvestorRepository;
+import com.unicorn.studio.dao.UserDAO;
 import com.unicorn.studio.dao.UserRepository;
 import com.unicorn.studio.entity.Club;
 import com.unicorn.studio.entity.Company;
@@ -36,6 +37,9 @@ public class UnicornServiceImp implements UnicornService {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private UserDAO userDAO;
 
 	
 	
@@ -49,6 +53,9 @@ public class UnicornServiceImp implements UnicornService {
 		this.userRepository = userRepository;
 	}
 	
+	public UnicornServiceImp() {}
+
+
 	@Override
 	@Transactional
 	public List<Club> getClubs() {
@@ -184,7 +191,6 @@ public class UnicornServiceImp implements UnicornService {
 	}
 
 	@Override
-	@Transactional
 	public void saveUser(User user) {
 		userRepository.save(user);
 	}
@@ -204,7 +210,6 @@ public class UnicornServiceImp implements UnicornService {
 	}
 
 	@Override
-	@Transactional
 	public void deleteUser(int id) {
 		userRepository.deleteById(id);
 	}

@@ -4,14 +4,19 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
 
 import com.unicorn.studio.entity.User;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.transaction.Transactional;
+
 @Repository
 public class UserDAOImp implements UserDAO {
 	// Inject session factory
+    
 	@Autowired
 	private SessionFactory sessionFactory;
 
@@ -39,7 +44,7 @@ public class UserDAOImp implements UserDAO {
 	@Override
 	public void deleteUser(int id) {
 		Session currentSession = sessionFactory.getCurrentSession();
-		Query<?> query = currentSession.createQuery("delete from user where id=:userId");
+		Query<?> query = currentSession.createQuery("delete from user where id=:id");
 		query.setParameter("userId", id);
 		query.executeUpdate();
 	}

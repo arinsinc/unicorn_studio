@@ -3,6 +3,7 @@ package com.unicorn.studio.entity;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -13,7 +14,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Entity
-@Table(name="user")
+@Table(name="users")
 public class User {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -41,20 +42,15 @@ public class User {
 	@Size(min=3, max=32)
 	private String type;
 	
-	@OneToOne(mappedBy="user", cascade=CascadeType.ALL)
+	@OneToOne(fetch = FetchType.LAZY, mappedBy="user", cascade=CascadeType.ALL)
 	private Company company;
 	
-	@OneToOne(mappedBy="user", cascade=CascadeType.ALL)
+	@OneToOne(fetch = FetchType.LAZY, mappedBy="user", cascade=CascadeType.ALL)
 	private Investor investor;
 	
 	public User() {}
 
-	public User(String firstName, String lastName, String email, String type) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.email = email;
-		this.type = type;
-	}
+	
 
 	public int getId() {
 		return id;
@@ -96,21 +92,6 @@ public class User {
 		this.type = type;
 	}
 
-	public Company getCompany() {
-		return company;
-	}
-
-	public void setCompany(Company company) {
-		this.company = company;
-	}
-
-	public Investor getInvestor() {
-		return investor;
-	}
-
-	public void setInvestor(Investor investor) {
-		this.investor = investor;
-	}
 
 	@Override
 	public String toString() {

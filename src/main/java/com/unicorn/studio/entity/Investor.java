@@ -3,6 +3,7 @@ package com.unicorn.studio.entity;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -30,11 +31,11 @@ public class Investor {
 	@NotNull
 	private int invested;
 	
-	@OneToOne(cascade=CascadeType.ALL)
+	@OneToOne(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
 	@JoinColumn(name="user_id")
 	private User user;
 	
-	@OneToMany(mappedBy="investor", cascade={CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	@OneToMany(fetch = FetchType.LAZY, mappedBy="investor", cascade={CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
 	private List<Funding> funding;
 	
 	public Investor() {}
@@ -69,13 +70,6 @@ public class Investor {
 		this.invested = invested;
 	}
 
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
 
 	@Override
 	public String toString() {

@@ -15,6 +15,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -70,7 +74,7 @@ public class UnicornStudioConfig implements WebMvcConfigurer {
 		// set hibernate properties
 		Properties props = new Properties();
 
-		props.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
+		props.setProperty("hibernate.dialect",env.getProperty("hibernate.dialect"));
 		props.setProperty("hibernate.show_sql", "true");
 		return props;				
 	}
@@ -84,18 +88,18 @@ public class UnicornStudioConfig implements WebMvcConfigurer {
 	@Bean
 	public LocalSessionFactoryBean sessionFactory(){
 		
-		// create session factory
+		// create session factorys
 		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
 		
 		// set the properties
 		sessionFactory.setDataSource(myDataSource());
 		sessionFactory.setPackagesToScan(env.getProperty("hibernate.packagesToScan"));
 		sessionFactory.setHibernateProperties(getHibernateProperties());
+		
 		return sessionFactory;
 	}
 	
-	@Bean
-	@Autowired
+	// Hibernate Transaction Manager
 	public HibernateTransactionManager transactionManager(SessionFactory sessionFactory) {
 		
 		// setup transaction manager based on session factory
@@ -103,7 +107,28 @@ public class UnicornStudioConfig implements WebMvcConfigurer {
 		txManager.setSessionFactory(sessionFactory);
 
 		return txManager;
-	}	
+	}
+	
+	@Bean
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+		LocalContainerEntityManagerFactoryBean entityManager = new LocalContainerEntityManagerFactoryBean();
+		entityManager.setDataSource(myDataSource());
+		entityManager.setPackagesToScan(new String[] { "com.unicorn.studio.entity" });
+	    JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+	    entityManager.setJpaVendorAdapter(vendorAdapter);
+	    entityManager.setJpaProperties(getHibernateProperties());
+	 
+	    return entityManager;
+	}
+	
+	// JPA Transaction Manager
+	@Bean
+	@Autowired
+	public JpaTransactionManager transactionManager() {
+		JpaTransactionManager txManager = new JpaTransactionManager();
+		txManager.setEntityManagerFactory(entityManagerFactory().getObject());
+		return txManager;
+	}
 	
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
