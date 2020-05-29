@@ -20,8 +20,8 @@ public class UserController {
 	@Autowired
 	private UnicornService unicornService;
 	
-	@GetMapping("/list")
-	public String getUsers(Model model) {
+	@RequestMapping("/list")
+	public String listUser(Model model) {
 		List<User> users = unicornService.getUsers();
 		model.addAttribute("theUsers", users);
 		return "list-users";
@@ -37,7 +37,7 @@ public class UserController {
 	@PostMapping("/add-user")
 	public String addUser(@ModelAttribute("theUser") User user) {
 		unicornService.saveUser(user);
-		return "redirect:/users/list";
+		return "redirect:/user/list";
 	}
 	
 	@GetMapping("/edit-user")
@@ -50,6 +50,6 @@ public class UserController {
 	@PostMapping("/delete")
 	public String deleteUser(@RequestParam("userID") int id, Model model) {
 		unicornService.deleteUser(id);
-		return "redirect:/users/list";
+		return "redirect:/user/list";
 	}
 }

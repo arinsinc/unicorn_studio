@@ -9,7 +9,6 @@ import com.unicorn.studio.entity.Investor;
 import com.unicorn.studio.entity.User;
 
 public interface UnicornService {
-	
 	public List<Club> getClubs();
 
 	public void saveClub(Club club);

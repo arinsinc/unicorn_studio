@@ -36,7 +36,7 @@ public class UnicornServiceImp implements UnicornService {
 	
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	
 	
 	@Autowired
@@ -49,9 +49,6 @@ public class UnicornServiceImp implements UnicornService {
 		this.userRepository = userRepository;
 	}
 	
-	public UnicornServiceImp() {}
-
-
 	@Override
 	@Transactional
 	public List<Club> getClubs() {
@@ -187,6 +184,7 @@ public class UnicornServiceImp implements UnicornService {
 	}
 
 	@Override
+	@Transactional
 	public void saveUser(User user) {
 		userRepository.save(user);
 	}
@@ -206,6 +204,7 @@ public class UnicornServiceImp implements UnicornService {
 	}
 
 	@Override
+	@Transactional
 	public void deleteUser(int id) {
 		userRepository.deleteById(id);
 	}
