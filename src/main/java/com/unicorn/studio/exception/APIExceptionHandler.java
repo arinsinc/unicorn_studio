@@ -1,4 +1,4 @@
-package com.unicorn.studio.rest;
+package com.unicorn.studio.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

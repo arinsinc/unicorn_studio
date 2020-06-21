@@ -1,4 +1,4 @@
-package com.unicorn.studio.rest;
+package com.unicorn.studio.exception;
 
 public class APIErrorResponse {
 	private int status;
