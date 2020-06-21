@@ -8,6 +8,8 @@ import com.unicorn.studio.entity.Funding;
 import com.unicorn.studio.entity.Investor;
 import com.unicorn.studio.entity.User;
 
+import javax.transaction.Transactional;
+
 public interface UnicornService {
 	public List<Club> getClubs();
 
@@ -48,11 +50,9 @@ public interface UnicornService {
 
 	public void saveUser(User user);
 
-	public User getUser(int id);
+	public User getUser(long id);
 
-	public void deleteUser(int id);
+	public void deleteUser(long id);
 
-
-	
-	
+	public User getUserByEmail(String email);
 }

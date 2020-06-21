@@ -1,24 +1,21 @@
 package com.unicorn.studio.entity;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.Date;
 
 @Entity
-@Table(name="user")
+@Table(name="users")
 public class User {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
-	private int id;
+	private long id;
 	
 	@Column(name="first_name")
 	@NotNull
@@ -35,32 +32,45 @@ public class User {
 	@Size(min=3, max=32)
 	@Email
 	private String email;
+
+	@Column(name="password")
+	@NotNull
+	private String password;
 	
 	@Column(name="type")
 	@NotNull
 	@Size(min=3, max=32)
 	private String type;
-	
-	@OneToOne(mappedBy="user", cascade=CascadeType.ALL)
+
+	@Column(name="last_login")
+	private Date last_login;
+
+	@Column(name="enabled")
+	private Boolean enabled = true;
+
+	@JsonIgnore
+	@OneToOne(mappedBy="user", fetch= FetchType.LAZY, cascade=CascadeType.ALL)
 	private Company company;
-	
-	@OneToOne(mappedBy="user", cascade=CascadeType.ALL)
+
+	@JsonIgnore
+	@OneToOne(mappedBy="user", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	private Investor investor;
 	
 	public User() {}
 
-	public User(String firstName, String lastName, String email, String type) {
+	public User(String firstName, String lastName, String email, String password, String type) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
+		this.password = password;
 		this.type = type;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -86,6 +96,12 @@ public class User {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getPassword() { return password; }
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public String getType() {

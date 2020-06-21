@@ -1,6 +1,9 @@
 package com.unicorn.studio.entity;
 
 import java.sql.Date;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -26,9 +29,9 @@ public class Company {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
-	private int id;
+	private long id;
 	
-	@Column(name="name")
+	@Column(name="company_name")
 	@NotNull
 	@Size(min=3, max=32)
 	private String name;
@@ -47,18 +50,21 @@ public class Company {
 	@Size(min=3, max=32)
 	private String industry;
 	
-	@Column(name="type")
+	@Column(name="company_type")
 	@NotNull
 	@Size(min=3, max=32)
 	private String type;
-	
+
+	@JsonIgnore
 	@OneToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="user_id")
 	private User user;
-	
+
+	@JsonIgnore
 	@OneToMany(mappedBy="company", cascade={CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-	private List<Funding> fundings;
-	
+	private List<Funding> funding;
+
+	@JsonIgnore
 	@ManyToMany(fetch=FetchType.LAZY, cascade= {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinTable(
 			name="company_club",
@@ -76,11 +82,11 @@ public class Company {
 		this.type = type;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 
@@ -133,11 +139,11 @@ public class Company {
 	}
 
 	public List<Funding> getFundings() {
-		return fundings;
+		return funding;
 	}
 
 	public void setFundings(List<Funding> fundings) {
-		this.fundings = fundings;
+		this.funding = fundings;
 	}
 
 	public List<Club> getClubs() {

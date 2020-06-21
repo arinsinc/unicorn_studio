@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.unicorn.studio.dao.ClubRepository;
@@ -36,6 +37,9 @@ public class UnicornServiceImp implements UnicornService {
 	
 	@Autowired
 	private UserRepository userRepository;
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 
 	
 	
@@ -180,33 +184,41 @@ public class UnicornServiceImp implements UnicornService {
 	@Override
 	@Transactional
 	public List<User> getUsers() {
+		List<User> user = userRepository.findAll();
 		return userRepository.findAll();
 	}
 
 	@Override
 	@Transactional
 	public void saveUser(User user) {
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		userRepository.save(user);
 	}
 
 	@Override
 	@Transactional
-	public User getUser(int id) {
+	public User getUser(long id) {
 		Optional<User> result = userRepository.findById(id);
 		User user = null;
 		if (result.isPresent()) {
 			user = result.get();
 		}
 		else {
-			throw new RuntimeException("Did not find employee id: " + id);
+			throw new RuntimeException("Did not find user id: " + id);
 		}
 		return user;
 	}
 
 	@Override
 	@Transactional
-	public void deleteUser(int id) {
+	public void deleteUser(long id) {
 		userRepository.deleteById(id);
+	}
+
+	@Override
+	@Transactional
+	public User getUserByEmail(String email) {
+		return userRepository.findUserByEmail(email);
 	}
 
 }

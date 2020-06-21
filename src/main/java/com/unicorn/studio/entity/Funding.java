@@ -18,7 +18,7 @@ public class Funding {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
-	private int id;
+	private long id;
 	
 	@Column(name="amount")
 	@NotNull
@@ -28,7 +28,8 @@ public class Funding {
 	@NotNull
 	@Size(min=3, max=32)
 	private String stage;
-	
+
+
 	@ManyToOne(cascade= {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinColumn(name="company_id")
 	private Company company;
@@ -46,11 +47,11 @@ public class Funding {
 		this.investor = investor;
 	}
 
-	public int getId() {
+	public long getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(long id) {
 		this.id = id;
 	}
 

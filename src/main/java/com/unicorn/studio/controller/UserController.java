@@ -1,55 +1,78 @@
 package com.unicorn.studio.controller;
 
+import com.unicorn.studio.exception.NotFoundException;
+import com.unicorn.studio.exception.UserExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
 import com.unicorn.studio.entity.User;
 import com.unicorn.studio.service.UnicornService;
 
-@Controller
-@RequestMapping("/user")
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.List;
+
+@RestController
 public class UserController {
-	// Inject Unicorn Service
 	@Autowired
 	private UnicornService unicornService;
-	
-	@RequestMapping("/list")
-	public String listUser(Model model) {
-		List<User> users = unicornService.getUsers();
-		model.addAttribute("theUsers", users);
-		return "list-users";
+
+	@GetMapping("/users")
+	public List<User> getUsers() {
+		return unicornService.getUsers();
 	}
-	
-	@GetMapping("/new-user-form")
-	public String newUser(Model model) {
-		User user = new User();
-		model.addAttribute("theUser",user);
-		return "user-form";
+
+	@GetMapping("/users/{userId}")
+	public User getUser(@PathVariable long userId) {
+		User user = unicornService.getUser(userId);
+		if (user == null) {
+			throw new NotFoundException("User not found with ID:" + userId);
+		}
+		return user;
 	}
-	
-	@PostMapping("/add-user")
-	public String addUser(@ModelAttribute("theUser") User user) {
+
+	@PostMapping("/users")
+	public User addUser(@RequestBody User user) {
+		User isUser = unicornService.getUserByEmail(user.getEmail());
+		if (isUser != null) {
+			throw new UserExistsException("Account with this email id already exists");
+		}
+		user.setId((long)0);
 		unicornService.saveUser(user);
-		return "redirect:/user/list";
+		return user;
 	}
-	
-	@GetMapping("/edit-user")
-	public String editUser(@RequestParam("userID") int id, Model model) {
-		User user = unicornService.getUser(id);
-		model.addAttribute("theUser", user);
-		return "user-form";
+
+	@PutMapping("/users")
+	public User updateUser(@RequestBody User user) {
+		unicornService.saveUser(user);
+		return user;
 	}
-	
-	@PostMapping("/delete")
-	public String deleteUser(@RequestParam("userID") int id, Model model) {
-		unicornService.deleteUser(id);
-		return "redirect:/user/list";
+
+	@DeleteMapping("/users/{userId}")
+	public String deleteUser(@PathVariable long userId) {
+		User isUser = unicornService.getUser(userId);
+		if (isUser == null) {
+			throw new NotFoundException("User not found with ID:" + userId);
+		}
+		unicornService.deleteUser(userId);
+		return "User deleted successfully for Id:" + userId;
+	}
+
+	@GetMapping("/login")
+	public String login(Model model, String error, String logout) {
+		return "Login to proceed";
+	}
+
+	@GetMapping("/logout")
+	public void logout(HttpServletResponse response) throws IOException {
+		System.out.println("Logged out successfully");
+		response.sendRedirect("/login");
 	}
 }
