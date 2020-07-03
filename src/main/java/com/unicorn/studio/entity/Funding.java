@@ -29,6 +29,11 @@ public class Funding {
 	@Size(min=3, max=32)
 	private String stage;
 
+	@Column(name="currency")
+	private String currency;
+
+	@Column(name="equity")
+	private double equity;
 
 	@ManyToOne(cascade= {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinColumn(name="company_id")
@@ -40,11 +45,11 @@ public class Funding {
 	
 	public Funding() {}
 
-	public Funding(int amount, String stage, Company company, Investor investor) {
+	public Funding(@NotNull int amount, @NotNull @Size(min = 3, max = 32) String stage, String currency, double equity) {
 		this.amount = amount;
 		this.stage = stage;
-		this.company = company;
-		this.investor = investor;
+		this.currency = currency;
+		this.equity = equity;
 	}
 
 	public long getId() {
@@ -71,6 +76,22 @@ public class Funding {
 		this.stage = stage;
 	}
 
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
+	public double getEquity() {
+		return equity;
+	}
+
+	public void setEquity(double equity) {
+		this.equity = equity;
+	}
+
 	public Company getCompany() {
 		return company;
 	}
@@ -89,9 +110,14 @@ public class Funding {
 
 	@Override
 	public String toString() {
-		return "Funding [id=" + id + ", amount=" + amount + ", stage=" + stage + ", company=" + company + ", investor="
-				+ investor + "]";
+		return "Funding{" +
+				"id=" + id +
+				", amount=" + amount +
+				", stage='" + stage + '\'' +
+				", currency='" + currency + '\'' +
+				", equity=" + equity +
+				", company=" + company +
+				", investor=" + investor +
+				'}';
 	}
-	
-
 }

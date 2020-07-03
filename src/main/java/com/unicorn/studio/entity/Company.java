@@ -55,6 +55,18 @@ public class Company {
 	@Size(min=3, max=32)
 	private String type;
 
+	@Column(name="headline")
+	@NotNull
+	@Size(min=3, max=256)
+	private String headline;
+
+	@Column(name="description")
+	@Size(min=64, max=1000)
+	private String description;
+
+	@Column(name="employees")
+	private int employees;
+
 	@JsonIgnore
 	@OneToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="user_id")
@@ -74,12 +86,15 @@ public class Company {
 	
 	public Company() {}
 
-	public Company(String name, String headQuarter, Date foundedYear, String industry, String type) {
+	public Company(@NotNull @Size(min = 3, max = 32) String name, @NotNull @Size(min = 3, max = 32) String headQuarter, @NotNull Date foundedYear, @NotNull @Size(min = 3, max = 32) String industry, @NotNull @Size(min = 3, max = 32) String type, @NotNull @Size(min = 3, max = 256) String headline, @Size(min = 64, max = 1000) String description, int employees) {
 		this.name = name;
 		this.headQuarter = headQuarter;
 		this.foundedYear = foundedYear;
 		this.industry = industry;
 		this.type = type;
+		this.headline = headline;
+		this.description = description;
+		this.employees = employees;
 	}
 
 	public long getId() {
@@ -130,6 +145,30 @@ public class Company {
 		this.type = type;
 	}
 
+	public String getHeadline() {
+		return headline;
+	}
+
+	public void setHeadline(String headline) {
+		this.headline = headline;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public int getEmployees() {
+		return employees;
+	}
+
+	public void setEmployees(int employees) {
+		this.employees = employees;
+	}
+
 	public User getUser() {
 		return user;
 	}
@@ -138,12 +177,12 @@ public class Company {
 		this.user = user;
 	}
 
-	public List<Funding> getFundings() {
+	public List<Funding> getFunding() {
 		return funding;
 	}
 
-	public void setFundings(List<Funding> fundings) {
-		this.funding = fundings;
+	public void setFunding(List<Funding> funding) {
+		this.funding = funding;
 	}
 
 	public List<Club> getClubs() {
@@ -154,11 +193,22 @@ public class Company {
 		this.clubs = clubs;
 	}
 
+
 	@Override
 	public String toString() {
-		return "Company [id=" + id + ", name=" + name + ", headQuarter=" + headQuarter + ", foundedYear=" + foundedYear
-				+ ", industry=" + industry + ", type=" + type + "]";
+		return "Company{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				", headQuarter='" + headQuarter + '\'' +
+				", foundedYear=" + foundedYear +
+				", industry='" + industry + '\'' +
+				", type='" + type + '\'' +
+				", headline='" + headline + '\'' +
+				", description='" + description + '\'' +
+				", employees=" + employees +
+				", user=" + user +
+				", funding=" + funding +
+				", clubs=" + clubs +
+				'}';
 	}
-	
-	
 }

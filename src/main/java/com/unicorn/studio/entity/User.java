@@ -36,11 +36,6 @@ public class User {
 	@Column(name="password")
 	@NotNull
 	private String password;
-	
-	@Column(name="type")
-	@NotNull
-	@Size(min=3, max=32)
-	private String type;
 
 	@Column(name="last_login")
 	private Date last_login;
@@ -55,15 +50,18 @@ public class User {
 	@JsonIgnore
 	@OneToOne(mappedBy="user", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
 	private Investor investor;
+
+	@JsonIgnore
+	@OneToOne(mappedBy="user", fetch= FetchType.LAZY, cascade=CascadeType.ALL)
+	private UserRole userRole;
 	
 	public User() {}
 
-	public User(String firstName, String lastName, String email, String password, String type) {
+	public User(String firstName, String lastName, String email, String password) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.email = email;
 		this.password = password;
-		this.type = type;
 	}
 
 	public long getId() {
@@ -104,14 +102,6 @@ public class User {
 		this.password = password;
 	}
 
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
 	public Company getCompany() {
 		return company;
 	}
@@ -128,10 +118,17 @@ public class User {
 		this.investor = investor;
 	}
 
+	public UserRole getUserRole() {
+		return userRole;
+	}
+
+	public void setUserRole(UserRole userRole) {
+		this.userRole = userRole;
+	}
+
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + ", type="
-				+ type + "]";
+		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + "]";
 	}
 	
 	

@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import com.unicorn.studio.entity.*;
+import com.unicorn.studio.exception.UserExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,11 +16,6 @@ import com.unicorn.studio.dao.CompanyRepository;
 import com.unicorn.studio.dao.FundingRepository;
 import com.unicorn.studio.dao.InvestorRepository;
 import com.unicorn.studio.dao.UserRepository;
-import com.unicorn.studio.entity.Club;
-import com.unicorn.studio.entity.Company;
-import com.unicorn.studio.entity.Funding;
-import com.unicorn.studio.entity.Investor;
-import com.unicorn.studio.entity.User;
 
 @Service
 public class UnicornServiceImp implements UnicornService {
@@ -192,6 +189,11 @@ public class UnicornServiceImp implements UnicornService {
 	@Transactional
 	public void saveUser(User user) {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		user.setUserRole(user.getUserRole());
+		User isUser = userRepository.findUserByEmail(user.getEmail());
+		if (isUser != null) {
+			throw new UserExistsException("Account with this email id already exists");
+		}
 		userRepository.save(user);
 	}
 

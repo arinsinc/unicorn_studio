@@ -2,11 +2,7 @@ package com.unicorn.studio.service;
 
 import java.util.List;
 
-import com.unicorn.studio.entity.Club;
-import com.unicorn.studio.entity.Company;
-import com.unicorn.studio.entity.Funding;
-import com.unicorn.studio.entity.Investor;
-import com.unicorn.studio.entity.User;
+import com.unicorn.studio.entity.*;
 
 import javax.transaction.Transactional;
 
