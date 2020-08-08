@@ -1,6 +1,6 @@
 # Unicorn Studio
 
-Unicorn Studio is an equity management and funding platform. Companies and investors can find a common platform where companies can manage their equity, get funding and investors can find a large oportunity to invest in numerous companies.
+Unicorn Studio is an equity management and funding platform. Companies and investors can find a common platform where companies can manage their equity, get funding and investors can find a large opportunity to invest in numerous companies.
 
 ## Tech Stack
 Here we are using Postgresql as our DB provider and various tools of Spring Framework to provide numerous features in this web application.
