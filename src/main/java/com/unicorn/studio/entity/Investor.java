@@ -11,7 +11,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -38,17 +37,12 @@ public class Investor {
 	@OneToOne(cascade=CascadeType.ALL)
 	@JoinColumn(name="user_id")
 	private User user;
-
-	@JsonIgnore
-	@OneToMany(mappedBy="investor", cascade={CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-	private List<Funding> funding;
 	
 	public Investor() {}
 
-	public Investor(int fund, int invested, User user) {
+	public Investor(int fund, int invested) {
 		this.fund = fund;
 		this.invested = invested;
-		this.user = user;
 	}
 
 	public long getId() {
@@ -85,7 +79,7 @@ public class Investor {
 
 	@Override
 	public String toString() {
-		return "Investor [id=" + id + ", fund=" + fund + ", invested=" + invested + ", user=" + user + "]";
+		return "Investor [id=" + id + ", fund=" + fund + ", invested=" + invested + "]";
 	}
 	
 }

@@ -1,9 +1,8 @@
 package com.unicorn.studio.entity;
 
 import java.sql.Date;
-import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -45,15 +44,22 @@ public class Company {
 	@NotNull
 	private Date foundedYear;
 	
-	@Column(name="industry")
-	@NotNull
-	@Size(min=3, max=32)
-	private String industry;
-	
 	@Column(name="company_type")
 	@NotNull
 	@Size(min=3, max=32)
 	private String type;
+
+	@Column(name="headline")
+	@NotNull
+	@Size(min=3, max=256)
+	private String headline;
+
+	@Column(name="description")
+	@Size(min=64, max=1000)
+	private String description;
+
+	@Column(name="company_size")
+	private String companySize;
 
 	@JsonIgnore
 	@OneToOne(cascade=CascadeType.ALL)
@@ -64,22 +70,35 @@ public class Company {
 	@OneToMany(mappedBy="company", cascade={CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
 	private List<Funding> funding;
 
-	@JsonIgnore
 	@ManyToMany(fetch=FetchType.LAZY, cascade= {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinTable(
-			name="company_club",
+			name="company_industry",
 			joinColumns=@JoinColumn(name="company_id"),
-			inverseJoinColumns=@JoinColumn(name="club_id"))
-	private List<Club> clubs;
+			inverseJoinColumns=@JoinColumn(name="industry_id"))
+	private List<Industry> industries;
+
+	@JsonIgnore
+	@OneToMany(mappedBy="company", cascade={CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	private List<Team> teams;
+
+	@JsonIgnore
+	@OneToMany(mappedBy="company", cascade={CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	private List<Investment> investments;
+
+	@JsonIgnore
+	@OneToOne(mappedBy="company", cascade={CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+	private CompanyMetrics companyMetrics;
 	
 	public Company() {}
 
-	public Company(String name, String headQuarter, Date foundedYear, String industry, String type) {
+	public Company(@NotNull @Size(min = 3, max = 32) String name, @NotNull @Size(min = 3, max = 32) String headQuarter, @NotNull Date foundedYear, @NotNull @Size(min = 3, max = 32) String type, @NotNull @Size(min = 3, max = 256) String headline, @Size(min = 64, max = 1000) String description, String companySize) {
 		this.name = name;
 		this.headQuarter = headQuarter;
 		this.foundedYear = foundedYear;
-		this.industry = industry;
 		this.type = type;
+		this.headline = headline;
+		this.description = description;
+		this.companySize = companySize;
 	}
 
 	public long getId() {
@@ -114,20 +133,36 @@ public class Company {
 		this.foundedYear = foundedYear;
 	}
 
-	public String getIndustry() {
-		return industry;
-	}
-
-	public void setIndustry(String industry) {
-		this.industry = industry;
-	}
-
 	public String getType() {
 		return type;
 	}
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public String getHeadline() {
+		return headline;
+	}
+
+	public void setHeadline(String headline) {
+		this.headline = headline;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getCompanySize() {
+		return companySize;
+	}
+
+	public void setCompanySize(String companySize) {
+		this.companySize = companySize;
 	}
 
 	public User getUser() {
@@ -138,27 +173,57 @@ public class Company {
 		this.user = user;
 	}
 
-	public List<Funding> getFundings() {
+	public List<Funding> getFunding() {
 		return funding;
 	}
 
-	public void setFundings(List<Funding> fundings) {
-		this.funding = fundings;
+	public void setFunding(List<Funding> funding) {
+		this.funding = funding;
 	}
 
-	public List<Club> getClubs() {
-		return clubs;
+	public List<Industry> getIndustries() {
+		return industries;
 	}
 
-	public void setClubs(List<Club> clubs) {
-		this.clubs = clubs;
+	public void setIndustries(List<Industry> industries) {
+		this.industries = industries;
+	}
+
+	public List<Team> getTeams() {
+		return teams;
+	}
+
+	public void setTeams(List<Team> teams) {
+		this.teams = teams;
+	}
+
+	public List<Investment> getInvestments() {
+		return investments;
+	}
+
+	public void setInvestments(List<Investment> investments) {
+		this.investments = investments;
+	}
+
+	public CompanyMetrics getCompanyMetrics() {
+		return companyMetrics;
+	}
+
+	public void setCompanyMetrics(CompanyMetrics companyMetrics) {
+		this.companyMetrics = companyMetrics;
 	}
 
 	@Override
 	public String toString() {
-		return "Company [id=" + id + ", name=" + name + ", headQuarter=" + headQuarter + ", foundedYear=" + foundedYear
-				+ ", industry=" + industry + ", type=" + type + "]";
+		return "Company{" +
+				"id=" + id +
+				", name='" + name + '\'' +
+				", headQuarter='" + headQuarter + '\'' +
+				", foundedYear=" + foundedYear +
+				", type='" + type + '\'' +
+				", headline='" + headline + '\'' +
+				", description='" + description + '\'' +
+				", companySize=" + companySize +
+				'}';
 	}
-	
-	
 }

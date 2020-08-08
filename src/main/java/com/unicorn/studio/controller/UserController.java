@@ -1,5 +1,6 @@
 package com.unicorn.studio.controller;
 
+import com.unicorn.studio.entity.Company;
 import com.unicorn.studio.exception.NotFoundException;
 import com.unicorn.studio.exception.UserExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,5 +75,6 @@ public class UserController {
 	public void logout(HttpServletResponse response) throws IOException {
 		System.out.println("Logged out successfully");
 		response.sendRedirect("/login");
+
 	}
 }

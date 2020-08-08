@@ -2,57 +2,81 @@ package com.unicorn.studio.service;
 
 import java.util.List;
 
-import com.unicorn.studio.entity.Club;
-import com.unicorn.studio.entity.Company;
-import com.unicorn.studio.entity.Funding;
-import com.unicorn.studio.entity.Investor;
-import com.unicorn.studio.entity.User;
-
-import javax.transaction.Transactional;
+import com.unicorn.studio.entity.*;
 
 public interface UnicornService {
-	public List<Club> getClubs();
+	List<Industry> getIndustries();
 
-	public void saveClub(Club club);
+	void saveIndustry(Industry industry);
 
-	public Club getClub(int id);
+	Industry getIndustry(long id);
 
-	public void deleteClub(int id);
+	void deleteIndustry(long id);
 
 
-	public List<Company> getCompanies();
+	List<Company> getCompanies();
 
-	public void saveCompany(Company company);
+	void saveCompany(Company company);
 
-	public Company getCompany(int id);
+	Company getCompany(long id);
 
-	public void deleteCompany(int id);
+	void deleteCompany(long id);
+
+
+	List<CompanyMetrics> getCompanyMetrics();
+
+	void saveCompanyMetrics(CompanyMetrics companyMetrics);
+
+	CompanyMetrics getCompanyMetrics(long id);
+
+	void deleteCompanyMetrics(long id);
 	
 	
-	public List<Funding> getFundings();
+	List<Funding> getFundings();
 
-	public void saveFunding(Funding funding);
+	void saveFunding(Funding funding);
 
-	public Funding getFunding(int id);
+	Funding getFunding(long id);
 
-	public void deleteFunding(int id);
+	void deleteFunding(long id);
+
+
+	List<Investment> getInvestments();
+
+	void saveInvestment(Investment investment);
+
+	Investment getInvestment(long id);
+
+	void deleteInvestment(long id);
 
 	
-	public List<Investor> getInvestors();
+	List<Investor> getInvestors();
 
-	public void saveInvestor(Investor investor);
+	void saveInvestor(Investor investor);
 
-	public Investor getInvestor(int id);
+	Investor getInvestor(long id);
 
-	public void deleteInvestor(int id);
+	void deleteInvestor(long id);
+
+
+	List<Team> getTeams();
+
+	void saveTeam(Team teams);
+
+	Team getTeam(long id);
+
+	void deleteTeam(long id);
+
 	
-	public List<User> getUsers();
+	List<User> getUsers();
 
-	public void saveUser(User user);
+	void saveUser(User user);
 
-	public User getUser(long id);
+	User getUser(long id);
 
-	public void deleteUser(long id);
+	void deleteUser(long id);
 
-	public User getUserByEmail(String email);
+	User getUserByEmail(String email);
+
+
 }
