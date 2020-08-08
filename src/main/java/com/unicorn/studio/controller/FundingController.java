@@ -16,11 +16,11 @@ import com.unicorn.studio.service.UnicornService;
 import java.util.List;
 
 @RestController
-public class FundController {
+public class FundingController {
     @Autowired
     private UnicornService unicornService;
 
-    @GetMapping("/funding")
+    @GetMapping("/fundings")
     public List<Funding> getFundings() {
         return unicornService.getFundings();
     }
@@ -34,20 +34,20 @@ public class FundController {
         return funding;
     }
 
-    @PostMapping("/funding")
+    @PostMapping("/fundings")
     public Funding addFunding(@RequestBody Funding funding) {
         funding.setId((long)0);
         unicornService.saveFunding(funding);
         return funding;
     }
 
-    @PutMapping("/funding")
+    @PutMapping("/fundings")
     public Funding updateFunding(@RequestBody Funding funding) {
         unicornService.saveFunding(funding);
         return funding;
     }
 
-    @DeleteMapping("/funding/{fundingId}")
+    @DeleteMapping("/fundings/{fundingId}")
     public String deleteFunding(@PathVariable int fundingId) {
         Funding isFunding = unicornService.getFunding(fundingId);
         if (isFunding == null) {

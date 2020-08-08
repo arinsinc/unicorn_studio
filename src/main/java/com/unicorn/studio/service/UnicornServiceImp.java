@@ -5,32 +5,36 @@ import java.util.Optional;
 
 import javax.transaction.Transactional;
 
+import com.unicorn.studio.dao.*;
 import com.unicorn.studio.entity.*;
 import com.unicorn.studio.exception.UserExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.unicorn.studio.dao.ClubRepository;
-import com.unicorn.studio.dao.CompanyRepository;
-import com.unicorn.studio.dao.FundingRepository;
-import com.unicorn.studio.dao.InvestorRepository;
-import com.unicorn.studio.dao.UserRepository;
-
 @Service
 public class UnicornServiceImp implements UnicornService {
 	// Inject DAO
 	@Autowired
-	private ClubRepository clubRepository;
+	private IndustryRepository industryRepository;
 	
 	@Autowired
 	private CompanyRepository companyRepository;
+
+	@Autowired
+	private CompanyMetricsRepository companyMetricsRepository;
 	
 	@Autowired
 	private FundingRepository fundingRepository;
+
+	@Autowired
+	private InvestmentRepository investmentRepository;
 	
 	@Autowired
 	private InvestorRepository investorRepository;
+
+	@Autowired
+	private TeamRepository teamRepository;
 	
 	@Autowired
 	private UserRepository userRepository;
@@ -38,48 +42,48 @@ public class UnicornServiceImp implements UnicornService {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 
-	
-	
-	@Autowired
-	public UnicornServiceImp(ClubRepository clubRepository, CompanyRepository companyRepository,
-			FundingRepository fundingRepository, InvestorRepository investorRepository, UserRepository userRepository) {
-		this.clubRepository = clubRepository;
+
+	public UnicornServiceImp(IndustryRepository industryRepository, CompanyRepository companyRepository, CompanyMetricsRepository companyMetricsRepository, FundingRepository fundingRepository, InvestmentRepository investmentRepository, InvestorRepository investorRepository, TeamRepository teamRepository, UserRepository userRepository) {
+		this.industryRepository = industryRepository;
 		this.companyRepository = companyRepository;
+		this.companyMetricsRepository = companyMetricsRepository;
 		this.fundingRepository = fundingRepository;
+		this.investmentRepository = investmentRepository;
 		this.investorRepository = investorRepository;
+		this.teamRepository = teamRepository;
 		this.userRepository = userRepository;
 	}
-	
+
 	@Override
 	@Transactional
-	public List<Club> getClubs() {
-		return clubRepository.findAll();
+	public List<Industry> getIndustries() {
+		return industryRepository.findAll();
 	}
 
 	@Override
 	@Transactional
-	public void saveClub(Club club) {
-		clubRepository.save(club);
+	public void saveIndustry(Industry industry) {
+		industryRepository.save(industry);
 	}
 
 	@Override
 	@Transactional
-	public Club getClub(int id) {
-		Optional<Club> result = clubRepository.findById(id);
-		Club club = null;
+	public Industry getIndustry(long id) {
+		Optional<Industry> result = industryRepository.findById(id);
+		Industry industry = null;
 		if (result.isPresent()) {
-			club = result.get();
+			industry = result.get();
 		}
 		else {
 			throw new RuntimeException("Did not find club id: " + id);
 		}
-		return club;
+		return industry;
 	}
 
 	@Override
 	@Transactional
-	public void deleteClub(int id) {
-		clubRepository.deleteById(id);
+	public void deleteIndustry(long id) {
+		industryRepository.deleteById(id);
 	}
 	
 	@Override
@@ -96,7 +100,7 @@ public class UnicornServiceImp implements UnicornService {
 
 	@Override
 	@Transactional
-	public Company getCompany(int id) {
+	public Company getCompany(long id) {
 		Optional<Company> result = companyRepository.findById(id);
 		Company company = null;
 		if (result.isPresent()) {
@@ -110,7 +114,39 @@ public class UnicornServiceImp implements UnicornService {
 
 	@Override
 	@Transactional
-	public void deleteCompany(int id) {
+	public void deleteCompany(long id) {
+		companyRepository.deleteById(id);
+	}
+
+	@Override
+	@Transactional
+	public List<CompanyMetrics> getCompanyMetrics() {
+		return companyMetricsRepository.findAll();
+	}
+
+	@Override
+	@Transactional
+	public void saveCompanyMetrics(CompanyMetrics companyMetrics) {
+		companyMetricsRepository.save(companyMetrics);
+	}
+
+	@Override
+	@Transactional
+	public CompanyMetrics getCompanyMetrics(long id) {
+		Optional<CompanyMetrics> result = companyMetricsRepository.findById(id);
+		CompanyMetrics companyMetrics = null;
+		if (result.isPresent()) {
+			companyMetrics = result.get();
+		}
+		else {
+			throw new RuntimeException("Did not find companyMetrics id: " + id);
+		}
+		return companyMetrics;
+	}
+
+	@Override
+	@Transactional
+	public void deleteCompanyMetrics(long id) {
 		companyRepository.deleteById(id);
 	}
 	
@@ -128,7 +164,7 @@ public class UnicornServiceImp implements UnicornService {
 
 	@Override
 	@Transactional
-	public Funding getFunding(int id) {
+	public Funding getFunding(long id) {
 		Optional<Funding> result = fundingRepository.findById(id);
 		Funding funding = null;
 		if (result.isPresent()) {
@@ -142,8 +178,40 @@ public class UnicornServiceImp implements UnicornService {
 
 	@Override
 	@Transactional
-	public void deleteFunding(int id) {
+	public void deleteFunding(long id) {
 		fundingRepository.deleteById(id);
+	}
+
+	@Override
+	@Transactional
+	public List<Investment> getInvestments() {
+		return investmentRepository.findAll();
+	}
+
+	@Override
+	@Transactional
+	public void saveInvestment(Investment investment) {
+		investmentRepository.save(investment);
+	}
+
+	@Override
+	@Transactional
+	public Investment getInvestment(long id) {
+		Optional<Investment> result = investmentRepository.findById(id);
+		Investment investment = null;
+		if (result.isPresent()) {
+			investment = result.get();
+		}
+		else {
+			throw new RuntimeException("Did not find investment id: " + id);
+		}
+		return investment;
+	}
+
+	@Override
+	@Transactional
+	public void deleteInvestment(long id) {
+		companyRepository.deleteById(id);
 	}
 	
 	@Override
@@ -160,7 +228,7 @@ public class UnicornServiceImp implements UnicornService {
 
 	@Override
 	@Transactional
-	public Investor getInvestor(int id) {
+	public Investor getInvestor(long id) {
 		Optional<Investor> result = investorRepository.findById(id);
 		Investor investor = null;
 		if (result.isPresent()) {
@@ -174,8 +242,40 @@ public class UnicornServiceImp implements UnicornService {
 
 	@Override
 	@Transactional
-	public void deleteInvestor(int id) {
+	public void deleteInvestor(long id) {
 		investorRepository.deleteById(id);
+	}
+
+	@Override
+	@Transactional
+	public List<Team> getTeams() {
+		return teamRepository.findAll();
+	}
+
+	@Override
+	@Transactional
+	public void saveTeam(Team team) {
+		teamRepository.save(team);
+	}
+
+	@Override
+	@Transactional
+	public Team getTeam(long id) {
+		Optional<Team> result = teamRepository.findById(id);
+		Team team = null;
+		if (result.isPresent()) {
+			team = result.get();
+		}
+		else {
+			throw new RuntimeException("Did not find team id: " + id);
+		}
+		return team;
+	}
+
+	@Override
+	@Transactional
+	public void deleteTeam(long id) {
+		teamRepository.deleteById(id);
 	}
 
 	@Override

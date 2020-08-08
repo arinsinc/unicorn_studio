@@ -39,10 +39,6 @@ public class Funding {
 	@JoinColumn(name="company_id")
 	private Company company;
 	
-	@ManyToOne(cascade={CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-	@JoinColumn(name="investor_id")
-	private Investor investor;
-	
 	public Funding() {}
 
 	public Funding(@NotNull int amount, @NotNull @Size(min = 3, max = 32) String stage, String currency, double equity) {
@@ -100,14 +96,6 @@ public class Funding {
 		this.company = company;
 	}
 
-	public Investor getInvestor() {
-		return investor;
-	}
-
-	public void setInvestor(Investor investor) {
-		this.investor = investor;
-	}
-
 	@Override
 	public String toString() {
 		return "Funding{" +
@@ -116,8 +104,6 @@ public class Funding {
 				", stage='" + stage + '\'' +
 				", currency='" + currency + '\'' +
 				", equity=" + equity +
-				", company=" + company +
-				", investor=" + investor +
 				'}';
 	}
 }

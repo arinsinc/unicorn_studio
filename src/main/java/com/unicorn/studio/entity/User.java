@@ -40,8 +40,8 @@ public class User {
 	@Column(name="last_login")
 	private Date last_login;
 
-	@Column(name="enabled")
-	private Boolean enabled = true;
+	@Column(name="is_confirmed")
+	private Boolean confirmed = true;
 
 	@JsonIgnore
 	@OneToOne(mappedBy="user", fetch= FetchType.LAZY, cascade=CascadeType.ALL)
@@ -54,6 +54,10 @@ public class User {
 	@JsonIgnore
 	@OneToOne(mappedBy="user", fetch= FetchType.LAZY, cascade=CascadeType.ALL)
 	private UserRole userRole;
+
+	@JsonIgnore
+	@OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private Investment investment;
 	
 	public User() {}
 
@@ -125,6 +129,10 @@ public class User {
 	public void setUserRole(UserRole userRole) {
 		this.userRole = userRole;
 	}
+
+	public Investment getInvestment() { return investment; }
+
+	public void setInvestment(Investment investment){ this.investment = investment; }
 
 	@Override
 	public String toString() {

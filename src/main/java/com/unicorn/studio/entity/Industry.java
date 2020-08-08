@@ -17,30 +17,29 @@ import javax.validation.constraints.Size;
 import java.util.List;
 
 @Entity
-@Table(name="club")
-public class Club {
+@Table(name="industry")
+public class Industry {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	@Column(name="id")
 	private long id;
 	
-	@Column(name="title")
+	@Column(name="name")
 	@NotNull
 	@Size(min=3, max=32)
-	private String title;
-	
+	private String name;
+
 	@ManyToMany(fetch=FetchType.LAZY, cascade= {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
 	@JoinTable(
-			name="company_club",
-			joinColumns=@JoinColumn(name="club_id"),
+			name="company_industry",
+			joinColumns=@JoinColumn(name="industry_id"),
 			inverseJoinColumns=@JoinColumn(name="company_id"))
 	private List<Company> companies;
 	
-	public Club() {}
+	public Industry() {}
 
-	public Club(String title, List<Company> companies) {
-		this.title = title;
-		this.companies = companies;
+	public Industry(String name) {
+		this.name= name;
 	}
 
 	public long getId() {
@@ -51,12 +50,12 @@ public class Club {
 		this.id = id;
 	}
 
-	public String getTitle() {
-		return title;
+	public String getName() {
+		return name;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	public List<Company> getCompany() {
@@ -69,7 +68,7 @@ public class Club {
 
 	@Override
 	public String toString() {
-		return "Club [id=" + id + ", title=" + title + ", companies=" + companies + "]";
+		return "Industry [id=" + id + ", name=" + name + ", companies=" + companies + "]";
 	}
 	
 	

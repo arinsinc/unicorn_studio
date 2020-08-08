@@ -3,6 +3,7 @@ package com.unicorn.studio.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -18,22 +19,14 @@ import java.util.concurrent.TimeUnit;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private DataSource dataSource;
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.jdbcAuthentication().dataSource(dataSource).passwordEncoder(passwordEncoder());
-    }
+    
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-//        http
-//                .authorizeRequests()
-//                .antMatchers("/").permitAll()
+        http
+                .authorizeRequests()
+                .antMatchers("/").permitAll()
+                .antMatchers(HttpMethod.POST,"/users").permitAll();
 //                .anyRequest()
 //                .authenticated()
 //                .and()
