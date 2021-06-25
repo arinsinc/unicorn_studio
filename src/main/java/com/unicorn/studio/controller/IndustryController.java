@@ -1,59 +1,59 @@
 package com.unicorn.studio.controller;
 
-import com.unicorn.studio.exception.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+
 
 import com.unicorn.studio.entity.Industry;
-import com.unicorn.studio.service.UnicornService;
+import com.unicorn.studio.exception.NotFoundException;
+import com.unicorn.studio.service.CompanyService;
+import com.unicorn.studio.service.UtilityService;
+import com.unicorn.studio.utils.ResponseSerializer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
+@RequestMapping("api/v1")
 public class IndustryController {
     @Autowired
-    private UnicornService unicornService;
+    private UtilityService utilityService;
 
-    @GetMapping("/industry")
-    public List<Industry> getIndustries() {
-        return unicornService.getIndustries();
+    @GetMapping("/industries")
+    public ResponseEntity<ResponseSerializer> getIndustries() {
+        List<Industry> industryList = utilityService.getIndustries();
+        ResponseSerializer response = new ResponseSerializer(true,"success","All industries fetched successfully", industryList);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/industry/{industryId}")
-    public Industry getIndustry(@PathVariable int industryId) {
-        Industry industry = unicornService.getIndustry(industryId);
-        if (industry == null) {
-            throw new NotFoundException("Industry not found with ID:" + industryId);
-        }
-        return industry;
+    @GetMapping("/industries/{industryId}")
+    public ResponseEntity<ResponseSerializer> getIndustry(@PathVariable int industryId) {
+        Industry industry = utilityService.getIndustry(industryId);
+        ResponseSerializer response = new ResponseSerializer(true,"success","Industry fetched successfully", industry);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @PostMapping("/industry")
-    public Industry addIndustry(@RequestBody Industry industry) {
+    @PostMapping("/industries")
+    public ResponseEntity<ResponseSerializer> addIndustry(@RequestBody Industry industry) {
         industry.setId((long)0);
-        unicornService.saveIndustry(industry);
-        return industry;
+        utilityService.saveIndustry(industry);
+        ResponseSerializer response = new ResponseSerializer(true,"success","Industry saved successfully", industry);
+        return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
 
-    @PutMapping("/industry")
-    public Industry updateIndustry(@RequestBody Industry industry) {
-        unicornService.saveIndustry(industry);
-        return industry;
+    @PutMapping("/industries")
+    public ResponseEntity<ResponseSerializer> updateIndustry(@RequestBody Industry industry) {
+        utilityService.saveIndustry(industry);
+        ResponseSerializer response = new ResponseSerializer(true,"success","Industry updated successfully", industry);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @DeleteMapping("/industry/{industryId}")
-    public String deleteIndustry(@PathVariable int industryId) {
-        Industry isIndustry = unicornService.getIndustry(industryId);
-        if (isIndustry == null) {
-            throw new NotFoundException("Industry not found with ID:" + industryId);
-        }
-        unicornService.deleteIndustry(industryId);
-        return "Industry deleted successfully for Id:" + industryId;
+    @DeleteMapping("/industries/{industryId}")
+    public ResponseEntity<ResponseSerializer> deleteIndustry(@PathVariable int industryId) {
+        utilityService.deleteIndustry(industryId);
+        ResponseSerializer response = new ResponseSerializer(true,"success","Industry deleted successfully", null);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }

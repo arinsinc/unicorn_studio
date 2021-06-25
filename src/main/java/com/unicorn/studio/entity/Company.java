@@ -1,229 +1,239 @@
 package com.unicorn.studio.entity;
 
-import java.sql.Date;
 
+
+import com.unicorn.studio.utils.IdGenerator;
+import com.unicorn.studio.validation.AllowedValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name="company")
+@Table(name="companies")
 public class Company {
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id")
-	private long id;
-	
-	@Column(name="company_name")
-	@NotNull
-	@Size(min=3, max=32)
-	private String name;
-	
-	@Column(name="headquarter")
-	@NotNull
-	@Size(min=3, max=32)
-	private String headQuarter;
-	
-	@Column(name="founded_year")
-	@NotNull
-	private Date foundedYear;
-	
-	@Column(name="company_type")
-	@NotNull
-	@Size(min=3, max=32)
-	private String type;
+    @Id
+    @GenericGenerator(name="company_seq", strategy = "sequence")
+    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator = "company_seq")
+    @Column(name="id")
+    private long id;
 
-	@Column(name="headline")
-	@NotNull
-	@Size(min=3, max=256)
-	private String headline;
+    @Column(name="uid")
+    @NotNull
+    @Size(max=64)
+    private String uid = IdGenerator.generateUId();
 
-	@Column(name="description")
-	@Size(min=64, max=1000)
-	private String description;
+    @Column(name="name")
+    @NotNull
+    @Size(min=2, max=132)
+    private String name;
 
-	@Column(name="company_size")
-	private String companySize;
+    @Column(name="profile")
+    @NotNull
+    private String profile;
 
-	@JsonIgnore
-	@OneToOne(cascade=CascadeType.ALL)
-	@JoinColumn(name="user_id")
-	private User user;
+    @Column(name="url")
+    @Size(max=132)
+    private String url;
 
-	@JsonIgnore
-	@OneToMany(mappedBy="company", cascade={CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-	private List<Funding> funding;
+    @Column(name="founded_year")
+    @NotNull
+    @Size(min=4, max=4)
+    private String foundedYear;
 
-	@ManyToMany(fetch=FetchType.LAZY, cascade= {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-	@JoinTable(
-			name="company_industry",
-			joinColumns=@JoinColumn(name="company_id"),
-			inverseJoinColumns=@JoinColumn(name="industry_id"))
-	private List<Industry> industries;
+    @Column(name="org_type")
+    @NotNull
+    @Size(min=2, max=16)
+    @AllowedValue(type = "Org")
+    private String orgType;
 
-	@JsonIgnore
-	@OneToMany(mappedBy="company", cascade={CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-	private List<Team> teams;
+    @Column(name="size")
+    @NotNull
+    @Size(min=2, max=16)
+    private String size;
 
-	@JsonIgnore
-	@OneToMany(mappedBy="company", cascade={CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-	private List<Investment> investments;
+    @Column(name="created_at")
+    @NotNull
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
-	@JsonIgnore
-	@OneToOne(mappedBy="company", cascade={CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-	private CompanyMetrics companyMetrics;
-	
-	public Company() {}
+    @Column(name="updated_at")
+    @NotNull
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
-	public Company(@NotNull @Size(min = 3, max = 32) String name, @NotNull @Size(min = 3, max = 32) String headQuarter, @NotNull Date foundedYear, @NotNull @Size(min = 3, max = 32) String type, @NotNull @Size(min = 3, max = 256) String headline, @Size(min = 64, max = 1000) String description, String companySize) {
-		this.name = name;
-		this.headQuarter = headQuarter;
-		this.foundedYear = foundedYear;
-		this.type = type;
-		this.headline = headline;
-		this.description = description;
-		this.companySize = companySize;
-	}
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="industry_id")
+    private Industry industry;
 
-	public long getId() {
-		return id;
-	}
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="location_id")
+    private City headquarter;
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="user_id")
+    private User user;
 
-	public String getName() {
-		return name;
-	}
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @OneToMany(fetch = FetchType.LAZY, cascade= {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(
+            name="companies_media_storages",
+            joinColumns = @JoinColumn( name="company_id"),
+            inverseJoinColumns = @JoinColumn( name="media_id")
+    )
+    private List<MediaStorage> media;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @JsonIgnore
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade= {CascadeType.ALL})
+    private List<CompanyMetrics> companyMetrics;
 
-	public String getHeadQuarter() {
-		return headQuarter;
-	}
+    @JsonIgnore
+    @ManyToMany(fetch = FetchType.LAZY, cascade= {CascadeType.ALL})
+    @JoinTable(name = "companies_investors",
+            joinColumns = @JoinColumn(name = "company_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "investor_id", referencedColumnName = "id"))
+    private List<Investor> investors;
 
-	public void setHeadQuarter(String hQuarter) {
-		this.headQuarter = hQuarter;
-	}
+    @JsonIgnore
+    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY, cascade= {CascadeType.ALL})
+    private List<Funding> fundingList;
 
-	public Date getFoundedYear() {
-		return foundedYear;
-	}
+    public Company() {}
 
-	public void setFoundedYear(Date foundedYear) {
-		this.foundedYear = foundedYear;
-	}
+    public Company(@NotNull @Size(min = 2, max = 132) String name, @NotNull String profile, @Size(max = 132) String url, @NotNull @Size(min = 2, max = 32) String foundedYear, @NotNull @Size(min = 2, max = 16) String orgType, @NotNull @Size(min = 2, max = 16) String size, City headquarter, Industry industry) {
+        this.name = name;
+        this.profile = profile;
+        this.url = url;
+        this.foundedYear = foundedYear;
+        this.orgType = orgType;
+        this.size = size;
+        this.industry = industry;
+        this.headquarter = headquarter;
+    }
 
-	public String getType() {
-		return type;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setId(long id) {
+        this.id = id;
+    }
 
-	public String getHeadline() {
-		return headline;
-	}
+    public String getUid() {
+        return uid;
+    }
 
-	public void setHeadline(String headline) {
-		this.headline = headline;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public String getProfile() {
+        return profile;
+    }
 
-	public String getCompanySize() {
-		return companySize;
-	}
+    public void setProfile(String profile) {
+        this.profile = profile;
+    }
 
-	public void setCompanySize(String companySize) {
-		this.companySize = companySize;
-	}
+    public String getUrl() {
+        return url;
+    }
 
-	public User getUser() {
-		return user;
-	}
+    public void setUrl(String url) {
+        this.url = url;
+    }
 
-	public void setUser(User user) {
-		this.user = user;
-	}
+    public String getFoundedYear() {
+        return foundedYear;
+    }
 
-	public List<Funding> getFunding() {
-		return funding;
-	}
+    public void setFoundedYear(String foundedYear) {
+        this.foundedYear = foundedYear;
+    }
 
-	public void setFunding(List<Funding> funding) {
-		this.funding = funding;
-	}
+    public String getOrgType() {
+        return orgType;
+    }
 
-	public List<Industry> getIndustries() {
-		return industries;
-	}
+    public void setOrgType(String orgType) {
+        this.orgType = orgType;
+    }
 
-	public void setIndustries(List<Industry> industries) {
-		this.industries = industries;
-	}
+    public String getSize() {
+        return size;
+    }
 
-	public List<Team> getTeams() {
-		return teams;
-	}
+    public void setSize(String size) {
+        this.size = size;
+    }
 
-	public void setTeams(List<Team> teams) {
-		this.teams = teams;
-	}
+    public Industry getIndustry() {
+        return industry;
+    }
 
-	public List<Investment> getInvestments() {
-		return investments;
-	}
+    public void setIndustry(Industry industry) {
+        this.industry = industry;
+    }
 
-	public void setInvestments(List<Investment> investments) {
-		this.investments = investments;
-	}
+    public City getHeadquarter() {
+        return headquarter;
+    }
 
-	public CompanyMetrics getCompanyMetrics() {
-		return companyMetrics;
-	}
+    public void setHeadquarter(City headquarter) {
+        this.headquarter = headquarter;
+    }
 
-	public void setCompanyMetrics(CompanyMetrics companyMetrics) {
-		this.companyMetrics = companyMetrics;
-	}
+    public List<CompanyMetrics> getCompanyMetrics() {
+        return companyMetrics;
+    }
 
-	@Override
-	public String toString() {
-		return "Company{" +
-				"id=" + id +
-				", name='" + name + '\'' +
-				", headQuarter='" + headQuarter + '\'' +
-				", foundedYear=" + foundedYear +
-				", type='" + type + '\'' +
-				", headline='" + headline + '\'' +
-				", description='" + description + '\'' +
-				", companySize=" + companySize +
-				'}';
-	}
+    public List<Investor> getInvestors() {
+        return investors;
+    }
+
+    public List<Funding> getFundingList() {
+        return fundingList;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public List<MediaStorage> getMedia() {
+        return media;
+    }
+
+    public void setMedia(List<MediaStorage> media) {
+        this.media = media;
+    }
+
+    @Override
+    public String toString() {
+        return "Company{" +
+                "id=" + id +
+                ", uid=" + uid + '\'' +
+                ", name='" + name + '\'' +
+                ", profile='" + profile + '\'' +
+                ", url='" + url + '\'' +
+                ", foundedYear='" + foundedYear + '\'' +
+                ", orgType='" + orgType + '\'' +
+                ", size='" + size + '\'' +
+                ", industry=" + industry +
+                ", headquarter=" + headquarter +
+                '}';
+    }
 }

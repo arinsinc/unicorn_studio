@@ -1,60 +1,62 @@
 package com.unicorn.studio.controller;
 
-import com.unicorn.studio.exception.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+
 
 import com.unicorn.studio.entity.Company;
-import com.unicorn.studio.service.UnicornService;
+import com.unicorn.studio.projection.CompanyPortfolioProjection;
+import com.unicorn.studio.projection.CompanyProjection;
+import com.unicorn.studio.service.CompanyService;
+import com.unicorn.studio.utils.ResponseSerializer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
+@RequestMapping("api/v1")
 public class CompanyController {
     @Autowired
-    private UnicornService unicornService;
+    private CompanyService companyService;
 
     @GetMapping("/companies")
-    public List<Company> getCompanies() {
-        return unicornService.getCompanies();
+    public ResponseEntity<ResponseSerializer> getCompanies(@RequestParam int pageNo, Pageable pageable) {
+        pageable = PageRequest.of(pageNo,20);
+        List<CompanyPortfolioProjection> organizationList = companyService.getCompanies(pageable);
+        ResponseSerializer response = new ResponseSerializer(true,"success","Companies fetched successfully",organizationList);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/company/{companyId}")
-    public Company getCompany(@PathVariable int companyId) {
-        Company company = unicornService.getCompany(companyId);
-        if (company == null) {
-            throw new NotFoundException("Company not found with ID:" + companyId);
-        }
-        return company;
+    @GetMapping("/companies/{companyId}")
+    public ResponseEntity<ResponseSerializer> getCompany(@PathVariable String companyId) {
+        CompanyProjection company = companyService.getCompany(companyId);
+        ResponseSerializer response = new ResponseSerializer(true,"success","Company fetched successfully",company);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     @PostMapping("/companies")
-    public Company addCompany(@RequestBody Company company) {
+    public ResponseEntity<ResponseSerializer> addCompany(@RequestBody Company company) {
         company.setId((long)0);
-        unicornService.saveCompany(company);
-        return company;
+        companyService.saveCompany(company);
+        ResponseSerializer response = new ResponseSerializer(true,"success","Company added successfully", company);
+        return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
 
     @PutMapping("/companies")
-    public Company updateCompany(@RequestBody Company company) {
-        unicornService.saveCompany(company);
-        return company;
+    public ResponseEntity<ResponseSerializer> updateCompany(@RequestBody Company company) {
+        companyService.saveCompany(company);
+        ResponseSerializer response = new ResponseSerializer(true,"success","Company updated successfully", company);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     @DeleteMapping("/companies/{companyId}")
-    public String deleteCompany(@PathVariable int companyId) {
-        Company isCompany = unicornService.getCompany(companyId);
-        if (isCompany == null) {
-            throw new NotFoundException("Company not found with ID:" + companyId);
-        }
-        unicornService.deleteCompany(companyId);
-        return "Company deleted successfully for Id:" + companyId;
+    public ResponseEntity<ResponseSerializer> deleteCompany(@PathVariable String companyId) {
+        companyService.deleteCompany(companyId);
+        ResponseSerializer response = new ResponseSerializer(true,"success","Company deleted successfully", null);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
-    
 }

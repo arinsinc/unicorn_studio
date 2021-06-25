@@ -1,51 +1,63 @@
 package com.unicorn.studio.controller;
 
+
+
 import com.unicorn.studio.entity.Investor;
-import com.unicorn.studio.exception.NotFoundException;
-import com.unicorn.studio.service.UnicornService;
+import com.unicorn.studio.projection.InvestorPortfolioProjection;
+import com.unicorn.studio.projection.InvestorProjection;
+import com.unicorn.studio.service.CompanyService;
+import com.unicorn.studio.service.InvestorService;
+import com.unicorn.studio.utils.ResponseSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
+@RestController
+@RequestMapping("api/v1")
 public class InvestorController {
     @Autowired
-    private UnicornService unicornService;
+    private InvestorService investorService;
 
     @GetMapping("/investors")
-    public List<Investor> getInvestors() {
-        return unicornService.getInvestors();
+    public ResponseEntity<ResponseSerializer> getInvestors(@RequestParam int pageNo, Pageable pageable) {
+        pageable = PageRequest.of(pageNo,20);
+        List<InvestorPortfolioProjection> investorList = investorService.getInvestors(pageable);
+        ResponseSerializer response = new ResponseSerializer(true,"success","All investors fetched successfully", investorList);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping("/investor/{investorId}")
-    public Investor getInvestor(@PathVariable int investorId) {
-        Investor investor = unicornService.getInvestor(investorId);
-        if (investor == null) {
-            throw new NotFoundException("Investor not found with ID:" + investorId);
-        }
-        return investor;
+    @GetMapping("/investors/{investorId}")
+    public ResponseEntity<ResponseSerializer> getInvestor(@PathVariable String investorId) {
+        InvestorProjection investor = investorService.getInvestor(investorId);
+        ResponseSerializer response = new ResponseSerializer(true,"success","Investor fetched successfully", investor);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     @PostMapping("/investors")
-    public Investor addInvestor(@RequestBody Investor investor) {
+    public ResponseEntity<ResponseSerializer> addInvestor(@RequestBody Investor investor) {
         investor.setId((long)0);
-        unicornService.saveInvestor(investor);
-        return investor;
+        investorService.saveInvestor(investor);
+        ResponseSerializer response = new ResponseSerializer(true,"success","Investor saved successfully", investor);
+        return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
 
     @PutMapping("/investors")
-    public Investor updateInvestor(@RequestBody Investor investor) {
-        unicornService.saveInvestor(investor);
-        return investor;
+    public ResponseEntity<ResponseSerializer> updateInvestor(@RequestBody Investor investor) {
+        investorService.saveInvestor(investor);
+        ResponseSerializer response = new ResponseSerializer(true,"success","Investor updated successfully", investor);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
     @DeleteMapping("/investors/{investorId}")
-    public String deleteInvestor(@PathVariable int investorId) {
-        Investor isInvestor = unicornService.getInvestor(investorId);
-        if (isInvestor == null) {
-            throw new NotFoundException("Investor not found with ID:" + investorId);
-        }
-        unicornService.deleteInvestor(investorId);
-        return "Investor deleted successfully for Id:" + investorId;
+    public ResponseEntity<ResponseSerializer> deleteInvestor(@PathVariable String investorId) {
+        investorService.deleteInvestor(investorId);
+        ResponseSerializer response = new ResponseSerializer(true,"success","Investor deleted successfully", null);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }

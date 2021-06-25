@@ -1,109 +1,141 @@
 package com.unicorn.studio.entity;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.unicorn.studio.utils.IdGenerator;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name="funding")
 public class Funding {
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id")
-	private long id;
-	
-	@Column(name="amount")
-	@NotNull
-	private int amount;
-	
-	@Column(name="stage")
-	@NotNull
-	@Size(min=3, max=32)
-	private String stage;
+    @Id
+    @GenericGenerator(name="funding_seq", strategy = "sequence")
+    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator = "funding_seq")
+    @Column(name="id")
+    private long id;
 
-	@Column(name="currency")
-	private String currency;
+    @Column(name="uid")
+    @NotNull
+    @Size(max=64)
+    private String uid = IdGenerator.generateUId();
 
-	@Column(name="equity")
-	private double equity;
+    @Column(name="amount")
+    @NotNull
+    private long amount;
 
-	@ManyToOne(cascade= {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-	@JoinColumn(name="company_id")
-	private Company company;
-	
-	public Funding() {}
+    @Column(name="currency")
+    @NotNull
+    private char currency = '$';
 
-	public Funding(@NotNull int amount, @NotNull @Size(min = 3, max = 32) String stage, String currency, double equity) {
-		this.amount = amount;
-		this.stage = stage;
-		this.currency = currency;
-		this.equity = equity;
-	}
+    @Column(name="funding_type")
+    @NotNull
+    @Size(min=2, max=64)
+    private String fundingType;
 
-	public long getId() {
-		return id;
-	}
+    @Column(name="date")
+    @NotNull
+    private LocalDateTime fundingDate;
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="company_id")
+    private Company company;
 
-	public int getAmount() {
-		return amount;
-	}
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name="investor_id")
+    private Investor investor;
 
-	public void setAmount(int amount) {
-		this.amount = amount;
-	}
+    @Column(name="created_at")
+    @NotNull
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
-	public String getStage() {
-		return stage;
-	}
+    @Column(name="updated_at")
+    @NotNull
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
-	public void setStage(String stage) {
-		this.stage = stage;
-	}
+    public Funding() {
+    }
 
-	public String getCurrency() {
-		return currency;
-	}
+    public Funding(int amount, char currency, String fundingType, LocalDateTime date, Investor investor, Company company) {
+        this.amount = amount;
+        this.currency = currency;
+        this.fundingType = fundingType;
+        this.fundingDate = date;
+        this.investor = investor;
+        this.company = company;
+    }
 
-	public void setCurrency(String currency) {
-		this.currency = currency;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public double getEquity() {
-		return equity;
-	}
+    public void setId(long id) {
+        this.id = id;
+    }
 
-	public void setEquity(double equity) {
-		this.equity = equity;
-	}
+    public String getUid() {
+        return uid;
+    }
 
-	public Company getCompany() {
-		return company;
-	}
+    public Investor getInvestor() {
+        return investor;
+    }
 
-	public void setCompany(Company company) {
-		this.company = company;
-	}
+    public void setInvestor(Investor investor) {
+        this.investor = investor;
+    }
 
-	@Override
-	public String toString() {
-		return "Funding{" +
-				"id=" + id +
-				", amount=" + amount +
-				", stage='" + stage + '\'' +
-				", currency='" + currency + '\'' +
-				", equity=" + equity +
-				'}';
-	}
+    public long getAmount() {
+        return amount;
+    }
+
+    public void setAmount(long amount) {
+        this.amount = amount;
+    }
+
+    public String getFundingType() {
+        return fundingType;
+    }
+
+    public void setFundingType(String fundingType) {
+        this.fundingType = fundingType;
+    }
+
+    public LocalDateTime getDate() {
+        return fundingDate;
+    }
+
+    public void setDate(LocalDateTime date) {
+        this.fundingDate = date;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    @Override
+    public String toString() {
+        return "Funding{" +
+                "id=" + id +
+                ", investor='" + investor + '\'' +
+                ", amount='" + amount + '\'' +
+                ", fundingType='" + fundingType + '\'' +
+                ", date=" + fundingDate +
+                '}';
+    }
 }

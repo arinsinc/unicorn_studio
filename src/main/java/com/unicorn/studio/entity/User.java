@@ -1,143 +1,311 @@
 package com.unicorn.studio.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+
+
+import com.unicorn.studio.utils.IdGenerator;
+import com.unicorn.studio.validation.AllowedValue;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name="users")
 public class User {
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id")
-	private long id;
-	
-	@Column(name="first_name")
-	@NotNull
-	@Size(min=3, max=32)
-	private String firstName;
-	
-	@Column(name="last_name")
-	@NotNull
-	@Size(min=3, max=32)
-	private String lastName;
-	
-	@Column(name="email")
-	@NotNull
-	@Size(min=3, max=32)
-	@Email
-	private String email;
+    @Id
+    @GenericGenerator(name="user_seq", strategy = "sequence")
+    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator = "user_seq")
+    @Column(name="id")
+    private long id;
 
-	@Column(name="password")
-	@NotNull
-	private String password;
+    @Column(name="uid")
+    @NotNull
+    @Size(max=64)
+    private String uid = IdGenerator.generateUId();
 
-	@Column(name="last_login")
-	private Date last_login;
+    @Column(name="full_name")
+    @NotNull
+    @Size(min=2, max=64)
+    private String fullName;
 
-	@Column(name="is_confirmed")
-	private Boolean confirmed = true;
+    @Column(name="email", unique = true)
+    @NotNull
+    @Email
+    @Size(min=2, max=64)
+    private String email;
 
-	@JsonIgnore
-	@OneToOne(mappedBy="user", fetch= FetchType.LAZY, cascade=CascadeType.ALL)
-	private Company company;
+    @Column(name="password")
+    @NotNull
+    @Size(max=132)
+    private String password;
 
-	@JsonIgnore
-	@OneToOne(mappedBy="user", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
-	private Investor investor;
+    @Column(name="is_active")
+    @NotNull
+    private Boolean isActive = true;
 
-	@JsonIgnore
-	@OneToOne(mappedBy="user", fetch= FetchType.LAZY, cascade=CascadeType.ALL)
-	private UserRole userRole;
+    @Column(name="last_login")
+    private LocalDateTime lastLogin;
 
-	@JsonIgnore
-	@OneToOne(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private Investment investment;
-	
-	public User() {}
+    @Column(name="provider")
+    @AllowedValue(type = "Oauth")
+    private String provider;
 
-	public User(String firstName, String lastName, String email, String password) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.email = email;
-		this.password = password;
-	}
+    @Column(name="confirmation_token")
+    @Size(max=512)
+    private String confirmationToken;
 
-	public long getId() {
-		return id;
-	}
+    @Column(name="confirmation_send_at")
+    private LocalDateTime confirmationSendAt;
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    @Column(name="confirmation_token_expire_at")
+    private LocalDateTime confirmationTokenExpireAt;
 
-	public String getFirstName() {
-		return firstName;
-	}
+    @Column(name="password_reset_token")
+    @Size(max=512)
+    private String passwordResetToken;
 
-	public void setFirstName(String firstName) {
-		this.firstName = firstName;
-	}
+    @Column(name="password_reset_send_at")
+    private LocalDateTime passwordResetSendAt;
 
-	public String getLastName() {
-		return lastName;
-	}
+    @Column(name="password_reset_token_expire_at")
+    private LocalDateTime passwordResetTokenExpireAt;
 
-	public void setLastName(String lastName) {
-		this.lastName = lastName;
-	}
+    @Column(name="created_at")
+    @NotNull
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
-	public String getEmail() {
-		return email;
-	}
+    @Column(name="updated_at")
+    @NotNull
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.EAGER, optional = false, cascade= {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name="role_id",nullable = false)
+    private Role role;
 
-	public String getPassword() { return password; }
+    @JsonIgnore
+    @OneToOne(mappedBy = "user", fetch = FetchType.EAGER, cascade= {CascadeType.ALL})
+    private Company company;
 
-	public void setPassword(String password) {
-		this.password = password;
-	}
+    @JsonIgnore
+    @OneToOne(mappedBy = "user", fetch = FetchType.EAGER, cascade= {CascadeType.ALL})
+    private Investor investor;
 
-	public Company getCompany() {
-		return company;
-	}
+    @JsonIgnore
+    @OneToOne(mappedBy = "user", fetch = FetchType.EAGER, cascade= {CascadeType.ALL})
+    private StartupProgram startupProgram;
 
-	public void setCompany(Company company) {
-		this.company = company;
-	}
+    @JsonIgnore
+    @OneToOne(mappedBy = "user", fetch = FetchType.EAGER, cascade= {CascadeType.ALL})
+    private StripeCustomer customer;
 
-	public Investor getInvestor() {
-		return investor;
-	}
+    @JsonIgnore
+    @OneToOne(fetch = FetchType.EAGER, cascade= {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinColumn(name="media_id")
+    private MediaStorage media;
 
-	public void setInvestor(Investor investor) {
-		this.investor = investor;
-	}
 
-	public UserRole getUserRole() {
-		return userRole;
-	}
+    public User() {}
 
-	public void setUserRole(UserRole userRole) {
-		this.userRole = userRole;
-	}
+    public User(@NotNull @Size(min = 2, max = 64) String fullName, @NotNull @Email @Size(min = 2, max = 64) String email,
+                @NotNull @Size(max = 132) String password, @NotNull Boolean isActive, LocalDateTime lastLogin, @Size(max = 32) String provider,
+                @Size(max = 512) String confirmationToken, LocalDateTime confirmationSendAt, LocalDateTime confirmationTokenExpireAt,
+                @Size(max = 512) String passwordResetToken, LocalDateTime passwordResetSendAt, LocalDateTime passwordResetTokenExpireAt) {
+        this.fullName = fullName;
+        this.email = email;
+        this.password = password;
+        this.isActive = isActive;
+        this.lastLogin = lastLogin;
+        this.provider = provider;
+        this.confirmationToken = confirmationToken;
+        this.confirmationSendAt = confirmationSendAt;
+        this.confirmationTokenExpireAt = confirmationTokenExpireAt;
+        this.passwordResetToken = passwordResetToken;
+        this.passwordResetSendAt = passwordResetSendAt;
+        this.passwordResetTokenExpireAt = passwordResetTokenExpireAt;
+    }
 
-	public Investment getInvestment() { return investment; }
+    public long getId() {
+        return id;
+    }
 
-	public void setInvestment(Investment investment){ this.investment = investment; }
+    public void setId(long id) {
+        this.id = id;
+    }
 
-	@Override
-	public String toString() {
-		return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", email=" + email + "]";
-	}
-	
-	
+    public String getUid() {
+        return uid;
+    }
+
+    public String getFullName() {
+        return fullName;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public Boolean getActive() {
+        return isActive;
+    }
+
+    public void setActive(Boolean active) {
+        isActive = active;
+    }
+
+    public LocalDateTime getLastLogin() {
+        return lastLogin;
+    }
+
+    public void setLastLogin(LocalDateTime lastLogin) {
+        this.lastLogin = lastLogin;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public String getConfirmationToken() {
+        return confirmationToken;
+    }
+
+    public void setConfirmationToken(String confirmationToken) {
+        this.confirmationToken = confirmationToken;
+    }
+
+    public LocalDateTime getConfirmationSendAt() {
+        return confirmationSendAt;
+    }
+
+    public void setConfirmationSendAt(LocalDateTime confirmationSendAt) {
+        this.confirmationSendAt = confirmationSendAt;
+    }
+
+    public LocalDateTime getConfirmationTokenExpireAt() {
+        return confirmationTokenExpireAt;
+    }
+
+    public void setConfirmationTokenExpireAt(LocalDateTime confirmationTokenExpireAt) {
+        this.confirmationTokenExpireAt = confirmationTokenExpireAt;
+    }
+
+    public String getPasswordResetToken() {
+        return passwordResetToken;
+    }
+
+    public void setPasswordResetToken(String passwordResetToken) {
+        this.passwordResetToken = passwordResetToken;
+    }
+
+    public LocalDateTime getPasswordResetSendAt() {
+        return passwordResetSendAt;
+    }
+
+    public void setPasswordResetSendAt(LocalDateTime passwordResetSendAt) {
+        this.passwordResetSendAt = passwordResetSendAt;
+    }
+
+    public LocalDateTime getPasswordResetTokenExpireAt() {
+        return passwordResetTokenExpireAt;
+    }
+
+    public void setPasswordResetTokenExpireAt(LocalDateTime passwordResetTokenExpireAt) {
+        this.passwordResetTokenExpireAt = passwordResetTokenExpireAt;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
+    }
+
+    public void setCustomer(StripeCustomer customer) {
+        this.customer = customer;
+    }
+
+    public StripeCustomer getCustomer() {
+        return customer;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
+    }
+
+    public Investor getInvestor() {
+        return investor;
+    }
+
+    public void setInvestor(Investor investor) {
+        this.investor = investor;
+    }
+
+    public StartupProgram getStartupProgram() {
+        return startupProgram;
+    }
+
+    public void setStartupProgram(StartupProgram startupProgram) {
+        this.startupProgram = startupProgram;
+    }
+
+    public MediaStorage getMedia() {
+        return media;
+    }
+
+    public void setMedia(MediaStorage media) {
+        this.media = media;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", fullName='" + fullName + '\'' +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", isActive=" + isActive +
+                ", lastLogin=" + lastLogin +
+                ", provider='" + provider + '\'' +
+                ", confirmationToken='" + confirmationToken + '\'' +
+                ", confirmationSendAt=" + confirmationSendAt +
+                ", passwordResetToken='" + passwordResetToken + '\'' +
+                ", passwordResetSendAt=" + passwordResetSendAt +
+                ", role=" + role +
+                '}';
+    }
 }

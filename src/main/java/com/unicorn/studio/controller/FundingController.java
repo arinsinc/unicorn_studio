@@ -1,59 +1,58 @@
 package com.unicorn.studio.controller;
 
-import com.unicorn.studio.exception.NotFoundException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+
 
 import com.unicorn.studio.entity.Funding;
-import com.unicorn.studio.service.UnicornService;
+import com.unicorn.studio.projection.FundingProjection;
+import com.unicorn.studio.service.CompanyService;
+import com.unicorn.studio.utils.ResponseSerializer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
+@RequestMapping("api/v1")
 public class FundingController {
     @Autowired
-    private UnicornService unicornService;
+    private CompanyService companyService;
 
-    @GetMapping("/fundings")
-    public List<Funding> getFundings() {
-        return unicornService.getFundings();
+    @GetMapping("/funding")
+    public ResponseEntity<ResponseSerializer> getAllFundingByCompany(@RequestParam String companyId) {
+        List<FundingProjection> fundingList = companyService.getFundingList(companyId);
+        ResponseSerializer response = new ResponseSerializer(true,"success","All funding fetched successfully", fundingList);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @GetMapping("/funding/{fundingId}")
-    public Funding getFunding(@PathVariable int fundingId) {
-        Funding funding = unicornService.getFunding(fundingId);
-        if (funding == null) {
-            throw new NotFoundException("Funding not found with ID:" + fundingId);
-        }
-        return funding;
+    public ResponseEntity<ResponseSerializer> getFunding(@PathVariable String fundingId) {
+        FundingProjection funding = companyService.getFunding(fundingId);
+        ResponseSerializer response = new ResponseSerializer(true,"success","Funding fetched successfully", funding);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @PostMapping("/fundings")
-    public Funding addFunding(@RequestBody Funding funding) {
+    @PostMapping("/funding")
+    public ResponseEntity<ResponseSerializer> addFunding(@RequestBody Funding funding) {
         funding.setId((long)0);
-        unicornService.saveFunding(funding);
-        return funding;
+        companyService.saveFunding(funding);
+        ResponseSerializer response = new ResponseSerializer(true,"success","Funding saved successfully", funding);
+        return new ResponseEntity<>(response,HttpStatus.CREATED);
     }
 
-    @PutMapping("/fundings")
-    public Funding updateFunding(@RequestBody Funding funding) {
-        unicornService.saveFunding(funding);
-        return funding;
+    @PutMapping("/funding")
+    public ResponseEntity<ResponseSerializer> updateFunding(@RequestBody Funding funding) {
+        companyService.saveFunding(funding);
+        ResponseSerializer response = new ResponseSerializer(true,"success","Funding updated successfully", funding);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 
-    @DeleteMapping("/fundings/{fundingId}")
-    public String deleteFunding(@PathVariable int fundingId) {
-        Funding isFunding = unicornService.getFunding(fundingId);
-        if (isFunding == null) {
-            throw new NotFoundException("Funding not found with ID:" + fundingId);
-        }
-        unicornService.deleteFunding(fundingId);
-        return "Funding deleted successfully for Id:" + fundingId;
+    @DeleteMapping("/funding/{fundingId}")
+    public ResponseEntity<ResponseSerializer> deleteFunding(@PathVariable String fundingId) {
+        companyService.deleteFunding(fundingId);
+        ResponseSerializer response = new ResponseSerializer(true,"success","Funding deleted successsfully", null);
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
 }

@@ -1,76 +1,81 @@
 package com.unicorn.studio.entity;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
-import javax.persistence.Table;
+
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name="industry")
+@Table(name="industries")
 public class Industry {
-	@Id
-	@GeneratedValue(strategy=GenerationType.IDENTITY)
-	@Column(name="id")
-	private long id;
-	
-	@Column(name="name")
-	@NotNull
-	@Size(min=3, max=32)
-	private String name;
+    @Id
+    @GenericGenerator(name="industry_seq", strategy = "sequence")
+    @GeneratedValue(strategy= GenerationType.SEQUENCE, generator = "industry_seq")
+    @Column(name="id")
+    private long id;
 
-	@ManyToMany(fetch=FetchType.LAZY, cascade= {CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
-	@JoinTable(
-			name="company_industry",
-			joinColumns=@JoinColumn(name="industry_id"),
-			inverseJoinColumns=@JoinColumn(name="company_id"))
-	private List<Company> companies;
-	
-	public Industry() {}
+    @Column(name="name")
+    @NotNull
+    @Size(min=2, max=64)
+    private String name;
 
-	public Industry(String name) {
-		this.name= name;
-	}
+    @Column(name="category")
+    @Size(min=2, max=64)
+    private String group;
 
-	public long getId() {
-		return id;
-	}
+    @Column(name="created_at")
+    @NotNull
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
-	public void setId(long id) {
-		this.id = id;
-	}
+    @Column(name="updated_at")
+    @NotNull
+    @UpdateTimestamp
+    private LocalDateTime updatedAt;
 
-	public String getName() {
-		return name;
-	}
+    public Industry() {}
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public Industry(@NotNull @Size(min = 2, max = 64) String name, @Size(min = 2, max = 64) String group) {
+        this.name = name;
+        this.group = group;
+    }
 
-	public List<Company> getCompany() {
-		return companies;
-	}
+    public long getId() {
+        return id;
+    }
 
-	public void setCompany(List<Company> companies) {
-		this.companies = companies;
-	}
+    public void setId(long id) {
+        this.id = id;
+    }
 
-	@Override
-	public String toString() {
-		return "Industry [id=" + id + ", name=" + name + ", companies=" + companies + "]";
-	}
-	
-	
-	
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getGroup() {
+        return group;
+    }
+
+    public void setGroup(String group) {
+        this.group = group;
+    }
+
+    @Override
+    public String toString() {
+        return "Industry{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", group='" + group + '\'' +
+                '}';
+    }
 }

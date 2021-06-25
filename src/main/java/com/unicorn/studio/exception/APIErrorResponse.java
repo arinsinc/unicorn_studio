@@ -1,41 +1,41 @@
 package com.unicorn.studio.exception;
 
+import java.time.LocalDateTime;
+
 public class APIErrorResponse {
-	private int status;
-	private String message;
-	private long timeStamp;
-	
-	public APIErrorResponse() {}
+    private int status;
+    private String message;
+    private LocalDateTime timeStamp;
 
-	public APIErrorResponse(int status, String message, long timeStamp) {
-		this.status = status;
-		this.message = message;
-		this.timeStamp = timeStamp;
-	}
+    public APIErrorResponse() {}
 
-	public int getStatus() {
-		return status;
-	}
+    public APIErrorResponse(int status, String message, LocalDateTime timeStamp) {
+        this.status = status;
+        this.message = message;
+        this.timeStamp = timeStamp;
+    }
 
-	public void setStatus(int status) {
-		this.status = status;
-	}
+    public int getStatus() {
+        return status;
+    }
 
-	public String getMessage() {
-		return message;
-	}
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
-	public void setMessage(String message) {
-		this.message = message;
-	}
+    public String getMessage() {
+        return message;
+    }
 
-	public long getTimeStamp() {
-		return timeStamp;
-	}
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
-	public void setTimeStamp(long timeStamp) {
-		this.timeStamp = timeStamp;
-	}
-	
-	
+    public LocalDateTime getTimeStamp() {
+        return timeStamp;
+    }
+
+    public void setTimeStamp(LocalDateTime timeStamp) {
+        this.timeStamp = timeStamp;
+    }
 }
